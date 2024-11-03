@@ -4,7 +4,6 @@ class FaqPage extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this.shadowRoot.innerHTML = `
         <style>
-          /* Basic page styling */
           :host {
             display: block;
             padding: 20px;
@@ -19,35 +18,79 @@ class FaqPage extends HTMLElement {
             margin: 0 0 10px;
           }
   
-          p {
-            color: #555;
-            font-size: 1rem;
-            line-height: 1.5;
+          .category {
+            margin: 20px 0;
           }
   
-          /* Optional button styles */
-          .cta-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #1e1e1e;
-            color: #fff;
-            text-decoration: none;
+          .question {
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #ddd;
             border-radius: 5px;
-            transition: background-color 0.3s;
           }
   
-          .cta-button:hover {
-            background-color: #333;
+          .answer {
+            display: none;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #eee;
+            border-radius: 5px;
           }
+
         </style>
   
         <div class="page-content">
-          <h2>FAQ page Title</h2>
-          <p>This is a stand-in template for a page. Add your content here.</p>
-          <a href="#" class="cta-button">Learn More</a>
+          <h2>FAQ Page</h2>
+          <div class="faq">
+            <div class="category">
+              <h3>Category 1</h3>
+              <div class="question">
+                <h4>Question 1.1</h4>
+                <div class="answer">
+                  <p>Answer to question 1.1.</p>
+                </div>
+              </div>
+              <div class="question">
+                <h4>Question 1.2</h4>
+                <div class="answer">
+                  <p>Answer to question 1.2.</p>
+                </div>
+              </div>
+            </div>
+            <div class="category">
+              <h3>Category 2</h3>
+              <div class="question">
+                <h4>Question 2.1</h4>
+                <div class="answer">
+                  <p>Answer to question 2.1.</p>
+                </div>
+              </div>
+              <div class="question">
+                <h4>Question 2.2</h4>
+                <div class="answer">
+                  <p>Answer to question 2.2.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       `;
+  }
+
+  connectedCallback() {
+    this.shadowRoot.querySelectorAll(".question").forEach((question) => {
+      question.addEventListener("click", () => {
+        // Close any currently open answers
+        this.shadowRoot.querySelectorAll(".answer").forEach((answer) => {
+          answer.style.display = "none";
+        });
+
+        // Open the clicked question's answer
+        const answer = question.querySelector(".answer");
+        answer.style.display = "block";
+      });
+    });
   }
 }
 

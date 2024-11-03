@@ -82,6 +82,19 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
 );
 
+CREATE TABLE inquiries (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    message TEXT NOT NULL,
+    movie_title VARCHAR(100) NOT NULL,
+    event_date DATE NOT NULL,
+    event_name VARCHAR(100),
+    number_of_pax INT(11) NOT NULL,
+    preferred_time TIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- CREATE TABLE IF NOT EXISTS showtimes (
 --     showtime_id INT AUTO_INCREMENT PRIMARY KEY,
 --     show_id INT NOT NULL,

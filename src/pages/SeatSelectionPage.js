@@ -1,18 +1,18 @@
 class SeatSelectionPage extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
 
-    connectedCallback() {
-        const params = new URLSearchParams(window.location.hash.split('?')[1]);
-        const movieTitle = decodeURIComponent(params.get('movie'));
-        const locationName = decodeURIComponent(params.get('location'));
-        const showtime = decodeURIComponent(params.get('time'));
-        const date = decodeURIComponent(params.get('date'));
-        const showtimeId = params.get('showtimeId');
+  connectedCallback() {
+    const params = new URLSearchParams(window.location.hash.split("?")[1]);
+    const movieTitle = decodeURIComponent(params.get("movie"));
+    const locationName = decodeURIComponent(params.get("location"));
+    const showtime = decodeURIComponent(params.get("time"));
+    const date = decodeURIComponent(params.get("date"));
+    const showtimeId = params.get("showtimeId");
 
-        this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
             <style>
                 .container {
                     padding: 20px;
@@ -98,23 +98,25 @@ class SeatSelectionPage extends HTMLElement {
             </div>
         `;
 
-        this.setupNextButton();
-    }
+    this.setupNextButton();
+  }
 
-    setupNextButton() {
-        const nextButton = this.shadowRoot.querySelector('#nextButton');
-        const cinemaLayout = this.shadowRoot.querySelector('cinema-layout');
+  setupNextButton() {
+    const nextButton = this.shadowRoot.querySelector("#nextButton");
+    const cinemaLayout = this.shadowRoot.querySelector("cinema-layout");
 
-        cinemaLayout.addEventListener('seat-selection-change', (event) => {
-            nextButton.disabled = event.detail.selectedSeats.length === 0;
-        });
+    cinemaLayout.addEventListener("seat-selection-change", (event) => {
+      nextButton.disabled = event.detail.selectedSeats.length === 0;
+    });
 
-        nextButton.addEventListener('click', () => {
-            const selectedSeats = cinemaLayout.getSelectedSeats();
-            // Navigate to payment page with selected seats
-            window.location.hash = `#Payment?seats=${selectedSeats.join(',')}&showtimeId=${cinemaLayout.getAttribute('showtime-id')}`;
-        });
-    }
+    nextButton.addEventListener("click", () => {
+      const selectedSeats = cinemaLayout.getSelectedSeats();
+      // Navigate to payment page with selected seats
+      window.location.hash = `#Payment?seats=${selectedSeats.join(
+        ","
+      )}&showtimeId=${cinemaLayout.getAttribute("showtime-id")}`;
+    });
+  }
 }
 
-customElements.define('seat-selection-page', SeatSelectionPage); 
+customElements.define("seat-selection-page", SeatSelectionPage);

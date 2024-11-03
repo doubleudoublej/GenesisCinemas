@@ -11,8 +11,16 @@ class CorporatePage extends HTMLElement {
             font-family: Arial, sans-serif;
             color: #333;
             background-color: #f5f5f5;
+            text-align: center;
           }
-  
+
+          h1 {
+            color: #333;
+            font-size: 3rem;
+            margin: 0 0 10px;
+            }
+
+
           h2 {
             color: #333;
             font-size: 2rem;
@@ -50,27 +58,48 @@ class CorporatePage extends HTMLElement {
             color: red;
             font-size: 0.9rem;
           }
+
+          form {
+            border: 2px solid #333; /* Encapsulated in a bolded line */
+            padding: 20px; /* Add padding inside the border */
+            margin: 0 auto; /* Center the form */
+            text-align: left; /* Align text to left within form */
+            width: 600px; /* Set a specific width */
+            box-sizing: border-box; /* Ensure padding and border are included in the width */
+          }
+
         </style>
   
-        <div class="page-content">
-          <h2>Corporate Inquiry</h2>
-          <p>Please fill out the form below for any corporate inquiries, and we'll get back to you as soon as possible.</p>
-          <form id="corporate-form">
-            <input type="text" id="name" name="name" placeholder="Your Name" required>
-            <input type="email" id="email" name="email" placeholder="Your Email" required>
-            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
-            
-            <h3>Movie Booking Details</h3>
-            <input type="text" id="movie-title" name="movie-title" placeholder="Movie Title" required>
-            <input type="date" id="event-date" name="event-date" required>
-            <input type="text" id="event-name" name="event-name" placeholder="Event Name (Optional)">
-            <input type="number" id="number-of-pax" name="number-of-pax" placeholder="Number of Pax" required>
-            <input type="time" id="preferred-time" name="preferred-time" required>
-            
-            <button type="submit">Submit</button>
-            <div id="error-message" class="error"></div>
-          </form>
-        </div>
+          <div class="page-content">
+            <h1><strong><u>Corporate Inquiry</u></strong></h1>
+              <p>Please fill out the form below for any corporate inquiries, and we'll get back to you as soon as possible.</p>
+                <div class = "form">
+                  <form id="corporate-form">
+                    <h2><strong>Personal Details</strong></h2>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+
+                    <h2><strong>Movie Booking Details</strong></h2>
+                    <label for="movie-title">Movie Title:</label>
+                    <input type="text" id="movie-title" name="movie-title" placeholder="Movie Title" required>
+                    <label for="event-date">Event Date:</label>
+                    <input type="date" id="event-date" name="event-date" required>
+                    <label for="event-name">Event Name (Optional):</label>
+                    <input type="text" id="event-name" name="event-name" placeholder="Event Name (Optional)">
+                    <label for="number-of-pax">Number of Pax:</label>
+                    <input type="number" id="number-of-pax" name="number-of-pax" placeholder="Number of Pax" required>
+                    <label for="preferred-time">Preferred Time:</label>
+                    <input type="time" id="preferred-time" name="preferred-time" required>
+                    <button type="submit">Submit</button>
+                    <div id="error-message" class="error"></div>
+                  </form>
+                </div>
+          </div>
+
       `;
 
     this.shadowRoot
@@ -85,34 +114,85 @@ class CorporatePage extends HTMLElement {
     const name = this.shadowRoot.querySelector("#name").value.trim();
     const email = this.shadowRoot.querySelector("#email").value.trim();
     const message = this.shadowRoot.querySelector("#message").value.trim();
-    const eventDate = new Date(
-      this.shadowRoot.querySelector("#event-date").value
+    const eventDateInput = this.shadowRoot.querySelector("#event-date").value;
+    const eventDate = eventDateInput ? new Date(eventDateInput) : null;
+    const numberOfPax = parseInt(
+      this.shadowRoot.querySelector("#number-of-pax").value,
+      10
     );
     const today = new Date();
-    const errorMessageElement = this.shadowRoot.querySelector("#error-message");
+    today.setHours(0, 0, 0, 0); // Normalize today's date to compare dates correctly
 
-    let errorMessage = "";
+    let errorMessages = [];
 
     // Check if all fields are filled
-    if (!name || !email || !message || !eventDate) {
-      errorMessage = "Please fill out all required fields.";
+    if (!name) {
+      errorMessages.push("Name is required.");
     }
-    // Check if email format is valid
-    else if (!/^\S+@\S+\.\S+$/.test(email)) {
-      errorMessage = "Please enter a valid email address.";
+    if (!email) {
+      errorMessages.push("Email is required.");
     }
-    // Check if the event date is not today or in the past
-    else if (eventDate <= today) {
-      errorMessage = "Event date must be in the future.";
+    if (!message) {
+      errorMessages.push("Message is required.");
+    }
+    if (!eventDateInput) {
+      errorMessages.push("Event date is required.");
+    } else if (eventDate <= today) {
+      // Check if the event date is not today or in the past
+      errorMessages.push("Event date must be in the future.");
     }
 
-    if (errorMessage) {
-      errorMessageElement.textContent = errorMessage;
+    // Check if the number of pax is valid (aka >0)
+    if (numberOfPax <= 9) {
+      errorMessages.push("Number of Pax cannot be less than 10.");
+    }
+
+    // Check if email format is valid
+    if (email && !/^\S+@[a-zA-Z]{3,}(\.[a-zA-Z]{2,}){1,2}$/.test(email)) {
+      errorMessages.push("Please enter a valid email address.");
+    }
+
+    if (errorMessages.length > 0) {
+      this.showPopup(errorMessages.join("\n"));
     } else {
-      errorMessageElement.textContent = "";
-      // Submit the form data using fetch or your desired method
       this.submitForm();
     }
+  }
+
+  showPopup(message) {
+    // Create the popup container
+    const popupContainer = document.createElement("div");
+    popupContainer.style.position = "fixed";
+    popupContainer.style.top = "50%";
+    popupContainer.style.left = "50%";
+    popupContainer.style.transform = "translate(-50%, -50%)";
+    popupContainer.style.backgroundColor = "white";
+    popupContainer.style.padding = "20px";
+    popupContainer.style.border = "2px solid #333";
+    popupContainer.style.zIndex = "1000";
+    popupContainer.style.textAlign = "center";
+
+    // Create the message element
+    const messageElement = document.createElement("p");
+    messageElement.textContent = message;
+    messageElement.style.whiteSpace = "pre-line"; // To handle newlines correctly
+
+    // Custom styling for the error message
+    messageElement.style.color = "red"; // Change the text color
+    messageElement.style.fontSize = "20px"; // Change the font size
+    messageElement.style.fontWeight = "bold"; // Optional: Make the text bold
+
+    // Create the OK button
+    const okButton = document.createElement("button");
+    okButton.textContent = "OK";
+    okButton.style.marginTop = "10px";
+    okButton.addEventListener("click", () => {
+      popupContainer.remove(); // Remove the popup when OK is clicked
+    });
+
+    popupContainer.appendChild(messageElement);
+    popupContainer.appendChild(okButton);
+    this.shadowRoot.appendChild(popupContainer); // Append the popup to the shadow DOM
   }
 
   submitForm() {
@@ -120,7 +200,7 @@ class CorporatePage extends HTMLElement {
     const formData = new FormData(
       this.shadowRoot.querySelector("#corporate-form")
     );
-    fetch("form_submit.php", {
+    fetch("./src/services/form_submit.php", {
       method: "POST",
       body: formData,
     })
