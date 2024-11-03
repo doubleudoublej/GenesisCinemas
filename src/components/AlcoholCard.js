@@ -98,7 +98,7 @@ class AlcoholCard extends HTMLElement {
                 padding: 5px;
             }
 
-            .price {
+            .price {     
                 font-size: 1rem;
             }
 

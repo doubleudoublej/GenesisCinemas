@@ -13,17 +13,21 @@ class WineBanner extends HTMLElement {
     this.intervalId = null; // To store the interval ID
   }
 
-  // Function to fetch wine data from the server
-  async fetchWineData() {
+  async fetchFeaturedWineData() {
     try {
-      const response = await fetch("./src/services/fetch_featured_wine.php"); // Adjusted endpoint for wine data
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      const response = await fetch("./services/fetch_featured_wine.php");
+      const data = await response.json();
+
+      // Check if data is an array and not empty
+      if (Array.isArray(data) && data.length > 0) {
+        this.wines = data; // Assign the data to this.wines
+        this.createBanner(); // Call the function to create the banner
+      } else {
+        console.error("No featured wines available:", data);
+        this.wines = []; // Ensure this.wines is an empty array
       }
-      this.wines = await response.json();
-      this.createBanner();
     } catch (error) {
-      console.error("Error fetching wine data:", error);
+      console.error("Error fetching featured wine data:", error);
     }
   }
 
@@ -276,6 +280,7 @@ class WineBanner extends HTMLElement {
                 height: 24px;
             }
         `;
+
     this.shadowRoot.appendChild(style); // Append styles to Shadow DOM
   }
 }
