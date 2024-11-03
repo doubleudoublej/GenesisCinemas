@@ -89,139 +89,142 @@ class BarPage extends HTMLElement {
     this.fetchAlcoholItems();
   }
 
-  async fetchFoodItems() {
-    try {
-      const response = await fetch("./src/services/fetch_food.php");
-      const foodItems = await response.json();
-      console.log("Fetched Food Items:", foodItems);
-      this.renderFoodItems(foodItems);
-    } catch (error) {
-      console.error("Error fetching food items:", error);
-    }
+  fetchFoodItems() {
+    fetch("./services/fetch_food.php") // Adjust the path as necessary
+      .then((response) => response.json())
+      .then((foodItems) => this.renderFoodItems(foodItems))
+      .catch((error) => {
+        console.error("Error fetching food items:", error);
+        this.renderFoodItems({ error: "Failed to fetch food items" });
+      });
   }
 
   renderFoodItems(foodItems) {
     const foodList = this.shadowRoot.querySelector(".food-list");
-    foodList.innerHTML = "";
+    foodList.innerHTML = ""; // Clear previous items
 
-    let row;
-    foodItems.forEach((food, index) => {
-      if (index % 5 === 0) {
-        row = document.createElement("div");
-        row.classList.add("food-row");
-        foodList.appendChild(row);
-      }
-
-      const foodCard = new FoodCard(
-        food.name,
-        food.image_url,
-        food.description,
-        food.price
-      );
-
-      row.appendChild(foodCard);
-    });
+    if (Array.isArray(foodItems)) {
+      foodItems.forEach((item) => {
+        const foodCard = new FoodCard(
+          item.name,
+          item.image_url,
+          item.price,
+          item.description
+        );
+        foodList.appendChild(foodCard);
+      });
+    } else {
+      // Handle the error case (display an error message)
+      const errorMessage = document.createElement("div");
+      errorMessage.textContent =
+        "Error fetching food items: " + (foodItems.error || "Unknown error");
+      foodList.appendChild(errorMessage);
+    }
   }
 
-  async fetchDrinkItems() {
-    try {
-      const response = await fetch("./src/services/fetch_drinks.php");
-      const drinkItems = await response.json();
-      console.log("Fetched Drink Items:", drinkItems);
-      this.renderDrinkItems(drinkItems);
-    } catch (error) {
-      console.error("Error fetching drink items:", error);
-    }
+  fetchDrinkItems() {
+    fetch("./services/fetch_drinks.php") // Adjust the path as necessary
+      .then((response) => response.json())
+      .then((drinkItems) => this.renderDrinkItems(drinkItems))
+      .catch((error) => {
+        console.error("Error fetching drink items:", error);
+        this.renderDrinkItems({ error: "Failed to fetch drink items" });
+      });
   }
 
   renderDrinkItems(drinkItems) {
     const drinkList = this.shadowRoot.querySelector(".drink-list");
-    drinkList.innerHTML = "";
+    drinkList.innerHTML = ""; // Clear previous items
 
-    let row;
-    drinkItems.forEach((drink, index) => {
-      if (index % 5 === 0) {
-        row = document.createElement("div");
-        row.classList.add("drink-row");
-        drinkList.appendChild(row);
-      }
-
-      const drinkCard = new DrinksCard(
-        drink.name,
-        drink.image_url,
-        drink.description,
-        drink.price
-      );
-
-      row.appendChild(drinkCard);
-    });
+    if (Array.isArray(drinkItems)) {
+      drinkItems.forEach((item) => {
+        const drinkCard = new DrinksCard(
+          item.name,
+          item.image_url,
+          item.price,
+          item.description
+        );
+        drinkList.appendChild(drinkCard);
+      });
+    } else {
+      // Handle the error case (display an error message)
+      const errorMessage = document.createElement("div");
+      errorMessage.textContent =
+        "Error fetching drink items: " + (drinkItems.error || "Unknown error");
+      drinkList.appendChild(errorMessage);
+    }
   }
 
-  async fetchWineItems() {
-    try {
-      const response = await fetch("./src/services/fetch_wine_drop.php");
-      const wineItems = await response.json();
-      console.log("Fetched Wine Items:", wineItems);
-      this.renderWineItems(wineItems);
-    } catch (error) {
-      console.error("Error fetching wine items:", error);
-    }
+  fetchWineItems() {
+    fetch("./services/fetch_wine.php") // Adjust the path as necessary
+      .then((response) => response.json())
+      .then((wineItems) => this.renderWineItems(wineItems))
+      .catch((error) => {
+        console.error("Error fetching wine items:", error);
+        this.renderWineItems({ error: "Failed to fetch wine items" });
+      });
   }
 
   renderWineItems(wineItems) {
     const wineList = this.shadowRoot.querySelector(".wine-list");
-    wineList.innerHTML = "";
+    wineList.innerHTML = ""; // Clear previous items
 
-    let row;
-    wineItems.forEach((wine, index) => {
-      if (index % 5 === 0) {
-        row = document.createElement("div");
-        row.classList.add("wine-row");
-        wineList.appendChild(row);
-      }
-
-      const wineCard = new WineCard(
-        wine.name,
-        wine.image_url,
-        wine.description,
-        wine.price
-      );
-
-      row.appendChild(wineCard);
-    });
+    if (Array.isArray(wineItems)) {
+      wineItems.forEach((item) => {
+        const wineCard = new WineCard(
+          item.name,
+          item.image_url,
+          item.price,
+          item.description
+        );
+        wineList.appendChild(wineCard);
+      });
+    } else {
+      // Handle the error case (display an error message)
+      const errorMessage = document.createElement("div");
+      errorMessage.textContent =
+        "Error fetching wine items: " + (wineItems.error || "Unknown error");
+      wineList.appendChild(errorMessage);
+    }
   }
 
-  async fetchAlcoholItems() {
-    try {
-      const response = await fetch("./src/services/fetch_alcohol.php");
-      const alcoholItems = await response.json();
-      console.log("Fetched Alcohol Items:", alcoholItems);
-      this.renderAlcoholItems(alcoholItems);
-    } catch (error) {
-      console.error("Error fetching alcohol items:", error);
-    }
+  fetchAlcoholItems() {
+    fetch("./services/fetch_alcohol.php") // Adjust the path as necessary
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((alcoholItems) => this.renderAlcoholItems(alcoholItems))
+      .catch((error) => {
+        console.error("Error fetching alcohol items:", error);
+        this.renderAlcoholItems({ error: "Failed to fetch alcohol items" });
+      });
   }
 
   renderAlcoholItems(alcoholItems) {
     const alcoholList = this.shadowRoot.querySelector(".alcohol-list");
-    alcoholList.innerHTML = "";
+    alcoholList.innerHTML = ""; // Clear previous items
 
-    let row;
-    alcoholItems.forEach((alcohol, index) => {
-      if (index % 5 === 0) {
-        row = document.createElement("div");
-        row.classList.add("alcohol-row");
-        alcoholList.appendChild(row);
-      }
-
-      const alcoholCard = new AlcoholCard(
-        alcohol.name,
-        alcohol.image_url,
-        alcohol.price
-      );
-
-      row.appendChild(alcoholCard);
-    });
+    if (Array.isArray(alcoholItems)) {
+      alcoholItems.forEach((item) => {
+        const alcoholCard = new AlcoholCard(
+          item.name,
+          item.image_url,
+          item.price,
+          item.description
+        );
+        alcoholList.appendChild(alcoholCard);
+      });
+    } else {
+      // Handle the error case (display an error message)
+      const errorMessage = document.createElement("div");
+      errorMessage.textContent =
+        "Error fetching alcohol items: " +
+        (alcoholItems.error || "Unknown error");
+      alcoholList.appendChild(errorMessage);
+    }
   }
 }
 
