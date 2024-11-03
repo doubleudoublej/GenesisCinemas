@@ -16,6 +16,7 @@ class FaqPage extends HTMLElement {
             color: #333;
             font-size: 2rem;
             margin: 0 0 10px;
+            text-align: center;
           }
   
           .category {
@@ -24,18 +25,29 @@ class FaqPage extends HTMLElement {
   
           .question {
             cursor: pointer;
-            padding: 10px;
+            padding: 15px;
             margin: 10px 0;
-            background-color: #ddd;
+            background-color: #007BFF;
+            color: #fff;
             border-radius: 5px;
+            transition: background-color 0.3s ease;
+          }
+  
+          .question:hover {
+            background-color: #0056b3;
           }
   
           .answer {
             display: none;
-            padding: 10px;
+            padding: 15px;
             margin: 10px 0;
             background-color: #eee;
             border-radius: 5px;
+            border-left: 5px solid #007BFF;
+          }
+
+          .question.open .answer {
+            display: block;
           }
 
         </style>
@@ -82,13 +94,22 @@ class FaqPage extends HTMLElement {
     this.shadowRoot.querySelectorAll(".question").forEach((question) => {
       question.addEventListener("click", () => {
         // Close any currently open answers
-        this.shadowRoot.querySelectorAll(".answer").forEach((answer) => {
-          answer.style.display = "none";
+        this.shadowRoot.querySelectorAll(".question").forEach((q) => {
+          if (q !== question) {
+            q.classList.remove("open");
+            q.querySelector(".answer").style.display = "none";
+          }
         });
 
-        // Open the clicked question's answer
+        // Toggle the clicked question's answer
         const answer = question.querySelector(".answer");
-        answer.style.display = "block";
+        if (question.classList.contains("open")) {
+          question.classList.remove("open");
+          answer.style.display = "none";
+        } else {
+          question.classList.add("open");
+          answer.style.display = "block";
+        }
       });
     });
   }
