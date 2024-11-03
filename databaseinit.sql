@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS wine_selection;
+DROP TABLE IF EXISTS wine;
+DROP TABLE IF EXISTS alcohol;
+DROP TABLE IF EXISTS food;
+DROP TABLE IF EXISTS drinks;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS showtimes;
@@ -13,13 +18,13 @@ DROP TABLE IF EXISTS drinks;
 
 
 CREATE TABLE IF NOT EXISTS members (
-    member_id INT PRIMARY KEY,
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
     member_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password_hash VARCHAR(100) NOT NULL,
     points INT DEFAULT 0,
     session_token VARCHAR(64)
-);
+)AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS shows (
     show_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -106,6 +111,42 @@ CREATE TABLE inquiries (
 --     FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE
 -- );
 
+CREATE TABLE IF NOT EXISTS drinks (
+    drink_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price FLOAT NOT NULL,
+    category VARCHAR(50),
+    image_url VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS food (
+    food_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price FLOAT NOT NULL,
+    category VARCHAR(50),
+    image_url VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS alcohol (
+    alcohol_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(50),
+    price FLOAT NOT NULL,
+    image_url VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS wine (
+    wine_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    vintage INT,
+    region VARCHAR(100),
+    description TEXT,
+    price FLOAT NOT NULL,
+    image_url VARCHAR(255),
+    featured BOOLEAN DEFAULT 0
+);
 
 SHOW TABLES;
 
