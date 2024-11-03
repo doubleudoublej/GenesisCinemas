@@ -6,72 +6,93 @@ class CorporatePage extends HTMLElement {
         <style>
           /* Basic page styling */
           :host {
-            display: block;
+            display: flex;
             padding: 20px;
             font-family: Arial, sans-serif;
-            color: #333;
-            background-color: #f5f5f5;
-            text-align: center;
+            color: #333; /* Changed text color for better contrast against black */
+            background-color: #1e1e1e; /* Set background to black */
+            text-align: left; /* Align text to the left */
           }
 
           h1 {
-            color: #333;
+            color: #fff; /* Change heading color to white */
             font-size: 3rem;
             margin: 0 0 10px;
-            }
-
+          }
 
           h2 {
-            color: #333;
+            color: #fff; /* Change heading color to white */
             font-size: 2rem;
             margin: 0 0 10px;
           }
-  
+
           p {
-            color: #555;
+            color: #ccc; /* Changed to a lighter grey for better contrast */
             font-size: 1rem;
             line-height: 1.5;
           }
-  
-          input, textarea, button {
+
+          input, textarea {
+            background-color: #333;
             display: block;
             margin: 10px 0;
             padding: 10px;
             width: 100%;
             box-sizing: border-box;
+            color: #fff; /* White text for textarea */
           }
 
           button {
-            background-color: #1e1e1e;
-            color: #fff;
-            border: none;
+            background-color: #1e1e1e; /* Dark background for buttons */
+            color: #fff; /* White text for buttons */
+            border: 1px solid #fff; /* Add a border around the button */
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            float: right; /* Align button to the right of the div */
+            
           }
-  
+
           button:hover {
-            background-color: #333;
+            background-color: #333; /* Slightly lighter on hover */
           }
-  
+
           .error {
             color: red;
             font-size: 0.9rem;
           }
 
           form {
-            border: 2px solid #333; /* Encapsulated in a bolded line */
+            border: 2px solid transparent; /* Set border to transparent */
             padding: 20px; /* Add padding inside the border */
-            margin: 0 auto; /* Center the form */
+            margin: 0; /* Remove auto margin to shift the form left */
             text-align: left; /* Align text to left within form */
-            width: 600px; /* Set a specific width */
+            width: 1200px; /* Set a specific width */
             box-sizing: border-box; /* Ensure padding and border are included in the width */
           }
 
-        </style>
+          label {
+            color: #fff; /* Change to desired color (white in this case) */
+            font-size: 1rem; /* Optional: set font size */
+            margin-bottom: 5px; /* Optional: space below the label */
+            display: block; /* Ensure labels take up the full width */
+          }
+
+          img {
+            width: 100%; /* Set the width to always be 100% of the container */
+            height: auto; /* Maintain aspect ratio for height */
+            max-height: 300px; /* Set a maximum height to scale down if needed */
+            object-fit: cover; /* Cover the space while preserving aspect ratio */
+            border-radius: 5px; /* Optional: rounded corners */
+          }
+
+
+          
+          </style>
+
   
           <div class="page-content">
-            <h1><strong><u>Corporate Inquiry</u></strong></h1>
+            <h1><strong>Get in touch with us</strong></h1>
               <p>Please fill out the form below for any corporate inquiries, and we'll get back to you as soon as possible.</p>
                 <div class = "form">
                   <form id="corporate-form">
@@ -95,9 +116,12 @@ class CorporatePage extends HTMLElement {
                     <label for="preferred-time">Preferred Time:</label>
                     <input type="time" id="preferred-time" name="preferred-time" required>
                     <button type="submit">Submit</button>
+                    <button type="button" id = "clear-button">Clear</button>
+                    
                     <div id="error-message" class="error"></div>
                   </form>
                 </div>
+                
           </div>
 
       `;
@@ -108,6 +132,14 @@ class CorporatePage extends HTMLElement {
         event.preventDefault();
         this.validateForm();
       });
+
+    this.shadowRoot
+      .querySelector("#clear-button")
+      .addEventListener("click", () => this.clearForm());
+  }
+
+  clearForm() {
+    this.shadowRoot.querySelector("#corporate-form").reset(); // Reset the form
   }
 
   validateForm() {
