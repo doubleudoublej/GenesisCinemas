@@ -1,5 +1,3 @@
-import "../components/StaticBanner.js";
-
 class CorporatePage extends HTMLElement {
   constructor() {
     super();
@@ -27,103 +25,116 @@ class CorporatePage extends HTMLElement {
             line-height: 1.5;
           }
   
-          /* Optional button styles */
-          .cta-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 20px;
+          input, textarea, button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+          }
+
+          button {
             background-color: #1e1e1e;
             color: #fff;
-            text-decoration: none;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
             transition: background-color 0.3s;
           }
   
-          .cta-button:hover {
+          button:hover {
             background-color: #333;
+          }
+  
+          .error {
+            color: red;
+            font-size: 0.9rem;
           }
         </style>
   
         <div class="page-content">
-        <h2>Corporate Inquiry</h2>
-        <p>Please fill out the form below for any corporate inquiries, and we'll get back to you as soon as possible.</p>
-        <form id="corporate-form">
-          <input type="text" id="name" name="name" placeholder="Your Name" required>
-          <input type="email" id="email" name="email" placeholder="Your Email" required>
-          <textarea id="message" name="message" placeholder="Your Message" required></textarea>
-          
-          <h3>Movie Booking Details</h3>
-          <input type="text" id="movie-title" name="movie-title" placeholder="Movie Title" required>
-          <input type="date" id="event-date" name="event-date" required>
-          <input type="text" id="event-name" name="event-name" placeholder="Event Name (Optional)">
-          <input type="number" id="number-of-pax" name="number-of-pax" placeholder="Number of Pax" required>
-          <input type="time" id="preferred-time" name="preferred-time" placeholder="Preferred Time" required>
-          
-          <button type="submit">Submit</button>
-        </form>
-        <a href="#" class="cta-button">Learn More</a>
+          <h2>Corporate Inquiry</h2>
+          <p>Please fill out the form below for any corporate inquiries, and we'll get back to you as soon as possible.</p>
+          <form id="corporate-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+            
+            <h3>Movie Booking Details</h3>
+            <input type="text" id="movie-title" name="movie-title" placeholder="Movie Title" required>
+            <input type="date" id="event-date" name="event-date" required>
+            <input type="text" id="event-name" name="event-name" placeholder="Event Name (Optional)">
+            <input type="number" id="number-of-pax" name="number-of-pax" placeholder="Number of Pax" required>
+            <input type="time" id="preferred-time" name="preferred-time" required>
+            
+            <button type="submit">Submit</button>
+            <div id="error-message" class="error"></div>
+          </form>
         </div>
-
       `;
+
+    this.shadowRoot
+      .querySelector("#corporate-form")
+      .addEventListener("submit", (event) => {
+        event.preventDefault();
+        this.validateForm();
+      });
   }
 
-  // connectedCallback() {
-  //   this.shadowRoot.querySelector('#corporate-form').addEventListener('submit', (event) => {
-  //     event.preventDefault();
-  //     this.sendEmail();
-  //   })
+  validateForm() {
+    const name = this.shadowRoot.querySelector("#name").value.trim();
+    const email = this.shadowRoot.querySelector("#email").value.trim();
+    const message = this.shadowRoot.querySelector("#message").value.trim();
+    const eventDate = new Date(
+      this.shadowRoot.querySelector("#event-date").value
+    );
+    const today = new Date();
+    const errorMessageElement = this.shadowRoot.querySelector("#error-message");
 
-  // sendEmail() {
-  //   const name = this.shadowRoot.querySelector("#name").value;
-  //   const email = this.shadowRoot.querySelector("#email").value;
-  //   const message = this.shadowRoot.querySelector("#message").value;
+    let errorMessage = "";
 
-  //   // Additional fields
-  //   const movieTitle = this.shadowRoot.querySelector("#movie-title").value;
-  //   const eventDate = this.shadowRoot.querySelector("#event-date").value;
-  //   const eventName =
-  //     this.shadowRoot.querySelector("#event-name").value || "N/A";
-  //   const numberOfPax = this.shadowRoot.querySelector("#number-of-pax").value;
-  //   const preferredTime =
-  //     this.shadowRoot.querySelector("#preferred-time").value;
+    // Check if all fields are filled
+    if (!name || !email || !message || !eventDate) {
+      errorMessage = "Please fill out all required fields.";
+    }
+    // Check if email format is valid
+    else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      errorMessage = "Please enter a valid email address.";
+    }
+    // Check if the event date is not today or in the past
+    else if (eventDate <= today) {
+      errorMessage = "Event date must be in the future.";
+    }
 
-  //   // Construct the email content
-  //   const emailContent = `
-  //   Name: ${name}
-  //   Email: ${email}
-  //   Message: ${message}
+    if (errorMessage) {
+      errorMessageElement.textContent = errorMessage;
+    } else {
+      errorMessageElement.textContent = "";
+      // Submit the form data using fetch or your desired method
+      this.submitForm();
+    }
+  }
 
-  //   Movie Booking Details:
-  //   Movie Title: ${movieTitle}
-  //   Event Date: ${eventDate}
-  //   Event Name: ${eventName}
-  //   Number of Pax: ${numberOfPax}
-  //   Preferred Time: ${preferredTime}
-  // `;
-
-  //   // Email sending logic
-  //   fetch("your_email_sending_endpoint", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       subject: "Corporate Inquiry",
-  //       body: emailContent,
-  //     }),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log("Success:", data);
-  //       alert("Your message has been sent successfully!");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //       alert(
-  //         "There was an error sending your message. Please try again later."
-  //       );
-  //     });
-  // }
+  submitForm() {
+    // Collect form data and send it to the server
+    const formData = new FormData(
+      this.shadowRoot.querySelector("#corporate-form")
+    );
+    fetch("form_submit.php", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        alert(data); // Display the server response
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert(
+          "There was an error submitting your form. Please try again later."
+        );
+      });
+  }
 }
 
 customElements.define("corporate-page", CorporatePage);
